@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/bkfleet1/readme-generator#readme",
   "dependencies": {
-    "inquirer": "^8.2.0"
+    "inquirer": "^8.2.0",
+    "node-fetch": "^2.6.7"
   }
 }

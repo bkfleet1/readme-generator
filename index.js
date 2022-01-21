@@ -1,6 +1,7 @@
 // TODO: Include packages needed for this application
-// const writeToFile = require('fs');
+const writeToFile = require('fs');
 const inquirer = require('inquirer');
+const fetch = require("node-fetch");
 // const generateMarkdown = require('./utils/generateMarkdown');
 
 // TODO: Create an array of questions for user input
@@ -95,7 +96,7 @@ There are also optional sections, such as Badges, Features, Contributor Covenant
 const projectAuthors = authorsAnswers => {
     if (!authorsAnswers.developer) {
         authorsAnswers.developer = [];
-      }
+    }
     return inquirer.prompt([
         {
             type: 'input',
@@ -117,15 +118,15 @@ const projectAuthors = authorsAnswers => {
             default: false
         }
     ])
-    .then(coders => {
-        authorsAnswers.developer.push(coders);
-        if (coders.developers) {
-            return projectAuthors(authorsAnswers);
-        } else {
-            // console.log(authorsAnswers.developer);
-            return authorsAnswers.developer;
-        }
-    })
+        .then(coders => {
+            authorsAnswers.developer.push(coders);
+            if (coders.developers) {
+                return projectAuthors(authorsAnswers);
+            } else {
+                // console.log(authorsAnswers.developer);
+                return authorsAnswers.developer;
+            }
+        })
 };
 
 
@@ -170,6 +171,16 @@ const projectResources = resourcesAnswers => {
     ])
 };
 
+const licenses = () => {
+    fetch("https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json")
+    .then((response) => response.json())
+    .then((data) => {const licenseData = data.licenses;
+                for (let i = 0; i < licenseData.length; i++) {
+                    const licenseId = licenseData[i].licenseId
+                    const licenseName = licenseData[i].name
+                    console.log(licenseId, licenseName)}})
+    .catch((err) => console.log(err))
+}
 
 
 // // TODO: Create a function to write README file
@@ -203,11 +214,34 @@ const projectResources = resourcesAnswers => {
 projectDetails()
     .then(projectAuthors)
     .then(projectResources)
+    .then(licenses)
 
 
-            // .then(data => {
-            //     return generateMarkdown(data)
-            // })
-            // .then(writeToFile => {
-            //     return writeFile(writeToFile)
-            // })
+
+// .then(data => {
+//     return generateMarkdown(data)
+// })
+// .then(writeToFile => {
+//     return writeFile(writeToFile)
+// })
+
+
+// const licenses = function () {
+//     $.ajax({
+//         type: "GET",
+//         url: "https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json",
+//         async: true,
+//         dataType: "json",
+//         success: function (data) {
+//             const licenseData = data.licenses;
+//             for (let i = 0; i < licenseData.length; i++) {
+//                 const licenseId = licenseData[i].licenseId;
+//                 const licenseName = licenseData[i].name;
+//                 console.log(licenseId, licenseName);
+//             }
+//         },
+//         error: function (xhr, status, err) { },
+//     });
+// };
+
+
