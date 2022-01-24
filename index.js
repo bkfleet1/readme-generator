@@ -6,9 +6,9 @@ const generateMarkdown = require('./utils/generateMarkdown');
 
 // TODO: Create an array of questions for user input
 // Introduction, optional sections, and project details questions
-const projectDetails = detailsAnswers => {
-    if (!detailsAnswers) {
-        detailsAnswers = [];
+const projectDetails = Answers => {
+    if (!Answers) {
+        Answers = [];
     }
     console.log(`
 ===============================
@@ -73,16 +73,13 @@ Readme Genereator is a command-line application that dynamically generates a pro
         }
     ])
         .then(data => {
-            detailsAnswers.push(data)
-            console.log(detailsAnswers)
-            return detailsAnswers
+            Answers.push(data)
+            console.log(Answers)
+            return Answers
         })
 };
-
-const projectAuthors = authorsAnswers => {
-    // if (!authorsAnswers) {
-    //     authorsAnswers = [];
-    // }
+const authorsAnswers = []
+const projectAuthors = Answers => {
     return inquirer.prompt([
         {
             type: 'input',
@@ -118,12 +115,18 @@ const projectAuthors = authorsAnswers => {
         }
     ])
         .then(data => {
-            authorsAnswers.push(data);
+            author = {
+                developer: data.developer,
+                githubId: data.githubId
+            }
+            authorsAnswers.push(author);
             if (data.developers) {
-                return projectAuthors(authorsAnswers);
+                return projectAuthors(Answers);
             } else {
+                Answers.push(authorsAnswers)
                 console.log(authorsAnswers);
-                return authorsAnswers;
+                console.log(Answers)
+                return Answers;
             }
         })
 };
@@ -131,7 +134,7 @@ const projectAuthors = authorsAnswers => {
 
 
 //if we wanted to add a Other choice and allow a user to enter languages not listed?
-const projectResources = async resourcesAnswers => {
+const projectResources = async Answers => {
     return inquirer.prompt([
         {
             type: 'checkbox',
@@ -181,10 +184,15 @@ const projectResources = async resourcesAnswers => {
 
     ])
         .then(data => {
-            resourcesAnswers.push(data);
-            console.log(resourcesAnswers);
-            licenseUrl(data,resourcesAnswers);
-            return resourcesAnswers
+            const licenseX = data.licenseX
+            const langs = data.languages+','+data.languagesOther
+            const languages = {
+                languages: langs
+            }
+            Answers.push(languages);
+            console.log(Answers);
+            licenseUrl(licenseX,Answers);
+            return Answers
         })
 };
 
@@ -203,8 +211,7 @@ const licenses = async () => {
     return licenseArr
 };
 
-const licenseUrl = (data,resourcesAnswers) => {
-    const licenseX = data.licenseX
+const licenseUrl = (licenseX,Answers) => {
     console.log(licenseX)
     fetch("https://api.github.com/licenses")
         .then((response) => response.json())
@@ -214,7 +221,7 @@ const licenseUrl = (data,resourcesAnswers) => {
                 const licenseUrl = data[i].url
                 {
                     if (licenseName === licenseX) {
-                        licenseDetails(licenseUrl,resourcesAnswers)
+                        licenseDetails(licenseUrl,Answers)
                     }
                 }
             }
@@ -223,7 +230,7 @@ const licenseUrl = (data,resourcesAnswers) => {
 };
 
 
-const licenseDetails = (licenseUrl,resourcesAnswers) => {
+const licenseDetails = (licenseUrl,Answers) => {
     console.log(licenseUrl)
     fetch(`${licenseUrl}`)
         .then((response) => response.json())
@@ -232,8 +239,8 @@ const licenseDetails = (licenseUrl,resourcesAnswers) => {
             licenseKey: data.key,
             licenseDesc: data.description,
             },
-            resourcesAnswers.push(licenseDesc),
-            console.log(resourcesAnswers))
+            Answers.push(licenseDesc),
+            console.log(Answers))
         )
         .catch((err) => console.log(err))
 };
