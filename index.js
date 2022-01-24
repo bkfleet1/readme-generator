@@ -183,62 +183,59 @@ const projectResources = async resourcesAnswers => {
         .then(data => {
             resourcesAnswers.push(data);
             console.log(resourcesAnswers);
-            //   return resourcesAnswers
-            licenseDesc(resourcesAnswers);
+            licenseUrl(data,resourcesAnswers);
+            return resourcesAnswers
         })
 };
 
 
 const licenses = async () => {
     const licenseArr = []
- /
     fetch("https://api.github.com/licenses")
         .then((response) => response.json())
         .then((data) => {
             for (let i = 0; i < data.length; i++) {
                 const licenseName = data[i].name
-                const licenseUrl = data[i].url
-                // localStorage.setItem(licenseName,licenseUrl)
-                licenseArr.push(licenseName)
-                // licenseArr2.push(licenseName,licenseUrl)
+                 licenseArr.push(licenseName)
             }
         })
         .catch((err) => console.log(err))
     return licenseArr
 };
 
-// const licenseDesc = (resourcesAnswers,licenseArr2) => {
-//     console.log(licenseArr2);
-//     console.log(resourcesAnswers);
-    // for (let i = 0; i < resourcesAnswers.length; i++) {
-    //     const licenseX = resourcesAnswers[i].licenseX;
-    //     console.log(licenseX);
-    //     {for (let index = 0; index < licenseArr2.length; index++) {
-    //         const l_name = licenseArr2[index].licenseName;
-    //         const l_url = licenseArr2[index].licenseUrl;
-    //         if (l_name === licenseX) {
-    //             console.log(l_url)} 
-    //         }
-            
-    //     }
-    // }
-    // } 
+const licenseUrl = (data,resourcesAnswers) => {
+    const licenseX = data.licenseX
+    console.log(licenseX)
+    fetch("https://api.github.com/licenses")
+        .then((response) => response.json())
+        .then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                const licenseName = data[i].name
+                const licenseUrl = data[i].url
+                {
+                    if (licenseName === licenseX) {
+                        licenseDetails(licenseUrl,resourcesAnswers)
+                    }
+                }
+            }
+        })
+        .catch((err) => console.log(err))
+};
 
-const licenseDetails = (resourcesAnswers) => {
-    console.log(resourcesAnswers);
 
-    // fetch(`https://api.github.com/licenses/${licenseX}`)
-    //     .then((response) => response.json())
-    //     .then(data =>{
-    //         licenseDesc.push(data);
-    //         console.log(licenseDesc);
-    //         return licenseDesc;
-    //     })
-    //     // .then((data) => ({
-    //     //     licenseKey: data.key,
-    //     //     licenseDesc: data.description
-    //     //                  }))
-    //     .catch((err) => console.log(err))
+const licenseDetails = (licenseUrl,resourcesAnswers) => {
+    console.log(licenseUrl)
+    fetch(`${licenseUrl}`)
+        .then((response) => response.json())
+        .then((data) => (
+            licenseDesc = {
+            licenseKey: data.key,
+            licenseDesc: data.description,
+            },
+            resourcesAnswers.push(licenseDesc),
+            console.log(resourcesAnswers))
+        )
+        .catch((err) => console.log(err))
 };
 
 
@@ -278,7 +275,6 @@ projectDetails()
     .then(projectAuthors)
     .then(projectResources)
     .then(licenses)
-    .then(licenseDetails)
     // .then(generateMarkdown)
 
     // .then(data=>generateMarkdown({
