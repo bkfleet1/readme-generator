@@ -72,7 +72,6 @@ Readme Genereator is a command-line application that dynamically generates a pro
         }
     ])
         .then(Answers => {
-            console.log(Answers)
             return Answers;
         })
 };
@@ -116,17 +115,16 @@ const projectAuthors = Answers => {
         }
     ])
         .then((data) => {
-            //     author = {
-            //     developer: author.developer,
-            //     githubId: data.githubId
-            // };
-            Answers.authors.push(data)
+            author = {
+                developer: data.developer,
+                githubId: data.githubId
+            };
+            Answers.authors.push(author)
             if (data.developers) {
                 return projectAuthors(Answers);
-            } else 
-                console.log(Answers)
+            } else
                 return Answers;
-      
+
         })
 };
 
@@ -181,11 +179,24 @@ const projectResources = async Answers => {
             }
         }
     ])
-    .then((data) => {
-        Answers = {...Answers,...data}
-        console.log(Answers)
-        return Answers;
-    })
+        .then((data) => {
+            let langs = data.languages + ',' + data.languagesOther;
+            let langLic1 = {
+                languages: langs,
+                licenseX: data.licenseX
+            };
+            let langLic2 = {
+                languages: data.languages,
+                licenseX: data.licenseX
+            };
+            if (data.languagesConfirm) {
+                Answers = { ...Answers, ...langLic1 }
+                return Answers;
+            }
+            else 
+                Answers = { ...Answers, ...langLic2 }
+                return Answers;
+            })
 };
 
 
@@ -203,57 +214,38 @@ const licenses = async () => {
     return licenseArr
 };
 
-const licenseUrl = Answers => {
-    console.log(Answers)
-    // for (let i = 0; i < Answers.length; i++) {
-    // const licenseX = Answers[i]
-    // console.log(licenseX)}
-    // fetch("https://api.github.com/licenses")
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //         for (let i = 0; i < data.length; i++) {
-    //             const licenseName = data[i].name
-    //             const licenseUrl = data[i].url
-    //             {
-    //                 if (licenseName === licenseX) {
-    //                     fetch(`${licenseUrl}`)
-    //                     .then((response) => response.json())
-    //                     .then((data) => (
-    //                         licenseDesc = {
-    //                             licenseKey: data.key,
-    //                             licenseDesc: data.description,
-    //                             html_url: data.html_url
-    //                         },
-    //                         Answers.push(licenseDesc)
+const licenseUrl = async Answers => {
+    let licenseX = Answers.licenseX
+    fetch("https://api.github.com/licenses")
+        .then((response) => response.json())
+        .then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                const licenseName = data[i].name
+                const licenseUrl = data[i].url
+                {
+                    if (licenseName === licenseX) {
+                        fetch(`${licenseUrl}`)
+                            .then((response) => response.json())
+                            .then((data) => {
+                                licenseDesc = {
+                                    licenseKey: data.key,
+                                    licenseDesc: data.description,
+                                    html_url: data.html_url
+                                };
+                                Answers = { ...Answers, ...licenseDesc };
+                                console.log(Answers);
+                                return Answers;
+                            })
 
-    //                     ))
-    //                 return Answers
-    //                 }
-    //             }
-    //         }
-    //     })
-    //     .catch((err) => console.log(err))
+                    }
+                }
+            }
+        })
+        .catch((err) => console.log(err))
 };
 
 
-// const licenseDetails = (licenseUrl, Answers) => {
-//     fetch(`${licenseUrl}`)
-//         .then((response) => response.json())
-//         .then((data) => (
-//             licenseDesc = {
-//                 licenseKey: data.key,
-//                 licenseDesc: data.description,
-//                 html_url: data.html_url
-//             },
-//             Answers.push(licenseDesc)
-
-//         ))
-//         .catch((err) => console.log(err))
-//     return Answers
-// };
-
 const projectInstruct = Answers => {
-    console.log(Answers)
     return inquirer.prompt([
         {
             type: 'input',
@@ -274,11 +266,10 @@ const projectInstruct = Answers => {
             message: 'Do you want do includes installation example pictures or videos in your installation instructions?'
         }
     ])
-    .then ((data) => {
-        Answers = {...Answers,...data}
-        console.log(Answers)
-        return Answers;
-      })
+        .then((data) => {
+            Answers = { ...Answers, ...data }
+            return Answers;
+        })
 }
 
 const installPics = Answers => {
@@ -328,7 +319,6 @@ const installPics = Answers => {
             if (data.iPicsConfirm) {
                 return installPics(Answers);
             } else {
-                console.log(Answers)
                 return Answers;
             }
         })
@@ -365,47 +355,11 @@ const installPics = Answers => {
 // init()
 
 projectDetails()
-    .then(Answers => {return projectAuthors(Answers)})
+    .then(Answers => { return projectAuthors(Answers) })
     .then(projectResources)
-    // .then(Answers => {return projectResources(Answers)})
-    // .then(projectAuthors)
-    // .then(projectResources)
-    // .then(licenses)
-    // .then(licenseUrl)
     .then(projectInstruct)
     .then(installPics)
-    // .then(generateMarkdown)
+    .then(licenseUrl)
 
-    // .then(data=>generateMarkdown({
-    //     licenseDetails: licenseDetails(data.licenseX), ...data
-    // }))
-
-
-
-// .then(data => {
-//     return generateMarkdown(data)
-// })
-// .then(writeToFile => {
-//     return writeFile(writeToFile)
-// })
-
-
-// const licenses = function () {
-//     $.ajax({
-//         type: "GET",
-//         url: "https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json",
-//         async: true,
-//         dataType: "json",
-//         success: function (data) {
-//             const licenseData = data.licenses;
-//             for (let i = 0; i < licenseData.length; i++) {
-//                 const licenseId = licenseData[i].licenseId;
-//                 const licenseName = licenseData[i].name;
-//                 console.log(licenseId, licenseName);
-//             }
-//         },
-//         error: function (xhr, status, err) { },
-//     });
-// };
 
 
