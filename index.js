@@ -180,10 +180,10 @@ const projectResources = async Answers => {
                 }
             }
         }
-
     ])
     .then((data) => {
-        console.log(data)
+        Answers = {...Answers,...data}
+        console.log(Answers)
         return Answers;
     })
 };
@@ -252,7 +252,8 @@ const licenseUrl = Answers => {
 //     return Answers
 // };
 
-const projectInstruct = async Answers => {
+const projectInstruct = Answers => {
+    console.log(Answers)
     return inquirer.prompt([
         {
             type: 'input',
@@ -273,22 +274,18 @@ const projectInstruct = async Answers => {
             message: 'Do you want do includes installation example pictures or videos in your installation instructions?'
         }
     ])
-        .then(data => {
-            install_inst = {
-                install_inst: data.installation
-            },
-                Answers.push(install_inst);
-            if (data.installPicsConfirm) {
-                return installPics(Answers);
-            } else {
-                console.log(Answers)
-                return Answers
-            }
-        })
+    .then ((data) => {
+        Answers = {...Answers,...data}
+        console.log(Answers)
+        return Answers;
+      })
 }
 
-const iPics = []
-const installPics = async Answers => {
+const installPics = Answers => {
+    console.log(Answers);
+    if (!Answers.iPics) {
+        Answers.iPics = [];
+    }
     return inquirer.prompt([
         {
             type: 'input',
@@ -322,17 +319,16 @@ const installPics = async Answers => {
             message: 'Do you want do include more example pictures or videos in your installation instructions?'
         }
     ])
-        .then(data => {
+        .then((data) => {
             inst_Pics = {
                 iPicDesc: data.iPicDesc,
                 iPicLoc: data.iPicLoc
             }
-            iPics.push(inst_Pics);
+            Answers.iPics.push(inst_Pics);
             if (data.iPicsConfirm) {
                 return installPics(Answers);
             } else {
-                Answers.push(iPics),
-                    console.log(Answers)
+                console.log(Answers)
                 return Answers;
             }
         })
@@ -370,12 +366,14 @@ const installPics = async Answers => {
 
 projectDetails()
     .then(Answers => {return projectAuthors(Answers)})
-    .then(Answers => {return projectResources(Answers)})
+    .then(projectResources)
+    // .then(Answers => {return projectResources(Answers)})
     // .then(projectAuthors)
     // .then(projectResources)
     // .then(licenses)
-    .then(licenseUrl)
-    // .then(projectInstruct)
+    // .then(licenseUrl)
+    .then(projectInstruct)
+    .then(installPics)
     // .then(generateMarkdown)
 
     // .then(data=>generateMarkdown({
