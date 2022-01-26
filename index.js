@@ -78,7 +78,7 @@ Readme Genereator is a command-line application that dynamically generates a pro
             return Answers
         })
 };
-const authorsAnswers = []
+const authors = [];
 const projectAuthors = Answers => {
     return inquirer.prompt([
         {
@@ -115,17 +115,17 @@ const projectAuthors = Answers => {
         }
     ])
         .then(data => {
-            author = {
+                author = {
                 developer: data.developer,
                 githubId: data.githubId
-            }
-            authorsAnswers.push(author);
+            };
+            authors.push(author);
             if (data.developers) {
                 return projectAuthors(Answers);
             } else {
-                Answers.push(authorsAnswers)
-                console.log(authorsAnswers);
-                console.log(Answers)
+                Answers.push(authors)
+                // console.log(authorsAnswers);
+                // console.log(Answers)
                 return Answers;
             }
         })
@@ -184,14 +184,12 @@ const projectResources = async Answers => {
 
     ])
         .then(data => {
-            const licenseX = data.licenseX
-            const langs = data.languages+','+data.languagesOther
+            const langs = data.languages + ',' + data.languagesOther
             const languages = {
-                languages: langs
+                languages: langs,
+                license: data.licenseX
             }
             Answers.push(languages);
-            console.log(Answers);
-            licenseUrl(licenseX,Answers);
             return Answers
         })
 };
@@ -204,49 +202,147 @@ const licenses = async () => {
         .then((data) => {
             for (let i = 0; i < data.length; i++) {
                 const licenseName = data[i].name
-                 licenseArr.push(licenseName)
+                licenseArr.push(licenseName)
             }
         })
         .catch((err) => console.log(err))
     return licenseArr
 };
 
-const licenseUrl = (licenseX,Answers) => {
-    console.log(licenseX)
-    fetch("https://api.github.com/licenses")
-        .then((response) => response.json())
-        .then((data) => {
-            for (let i = 0; i < data.length; i++) {
-                const licenseName = data[i].name
-                const licenseUrl = data[i].url
-                {
-                    if (licenseName === licenseX) {
-                        licenseDetails(licenseUrl,Answers)
-                    }
+const licenseUrl = Answers => {
+    console.log(Answers)
+    // for (let i = 0; i < Answers.length; i++) {
+    // const licenseX = Answers[i]
+    // console.log(licenseX)}
+    // fetch("https://api.github.com/licenses")
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //         for (let i = 0; i < data.length; i++) {
+    //             const licenseName = data[i].name
+    //             const licenseUrl = data[i].url
+    //             {
+    //                 if (licenseName === licenseX) {
+    //                     fetch(`${licenseUrl}`)
+    //                     .then((response) => response.json())
+    //                     .then((data) => (
+    //                         licenseDesc = {
+    //                             licenseKey: data.key,
+    //                             licenseDesc: data.description,
+    //                             html_url: data.html_url
+    //                         },
+    //                         Answers.push(licenseDesc)
+                
+    //                     ))
+    //                 return Answers
+    //                 }
+    //             }
+    //         }
+    //     })
+    //     .catch((err) => console.log(err))
+};
+
+
+// const licenseDetails = (licenseUrl, Answers) => {
+//     fetch(`${licenseUrl}`)
+//         .then((response) => response.json())
+//         .then((data) => (
+//             licenseDesc = {
+//                 licenseKey: data.key,
+//                 licenseDesc: data.description,
+//                 html_url: data.html_url
+//             },
+//             Answers.push(licenseDesc)
+
+//         ))
+//         .catch((err) => console.log(err))
+//     return Answers
+// };
+
+const projectInstruct = async Answers => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'installation',
+            message: `Please enter the install instructions for the project. (Required)`,
+            validate: installation => {
+                if (installation) {
+                    return true;
+                } else {
+                    console.log('Please enter installation instructions for the project');
+                    return false;
                 }
             }
-        })
-        .catch((err) => console.log(err))
-};
-
-
-const licenseDetails = (licenseUrl,Answers) => {
-    console.log(licenseUrl)
-    fetch(`${licenseUrl}`)
-        .then((response) => response.json())
-        .then((data) => (
-            licenseDesc = {
-            licenseKey: data.key,
-            licenseDesc: data.description,
+        },
+        {
+            type: 'confirm',
+            name: 'installPicsConfirm',
+            message: 'Do you want do includes installation example pictures or videos in your installation instructions?'
+        }
+    ])
+        .then(data => {
+            install_inst = {
+                install_inst: data.installation
             },
-            Answers.push(licenseDesc),
-            console.log(Answers))
-        )
-        .catch((err) => console.log(err))
-};
+                Answers.push(install_inst);
+            if (data.installPicsConfirm) {
+                return installPics(Answers);
+            } else {
+                console.log(Answers)
+                return Answers;
+            }
+        })
+}
 
-
-
+const iPics = []
+const installPics = async Answers => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'iPicDesc',
+            message: `Please provide a brief desc of the install pic. (required)`,
+            validate: ipicDesc => {
+                if (ipicDesc) {
+                    return true;
+                } else {
+                    console.log('Please enter a brief desc of the install pic. (required)');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'iPicLoc',
+            message: `Please the location and name of the picture file. (required) -- Example: ./assets/pictures/pic1.png`,
+            validate: ipicDesc => {
+                if (ipicDesc) {
+                    return true;
+                } else {
+                    console.log('A file location and name is required. Please provide location and name of the picture file. (required) -- Example ./assets/pictures/pic1.png');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'confirm',
+            name: 'iPicsConfirm',
+            message: 'Do you want do include more example pictures or videos in your installation instructions?'
+        }
+    ])
+        .then(data => {
+            inst_Pics = {
+                iPicDesc: data.iPicDesc,
+                iPicLoc: data.iPicLoc
+            }
+            iPics.push(inst_Pics);
+            if (data.iPicsConfirm) {
+                return installPics(Answers);
+            } else {
+                Answers.push(iPics),
+                    console.log(Answers)
+                return Answers;
+            }
+        })
+}
 
 
 
@@ -281,7 +377,9 @@ const licenseDetails = (licenseUrl,Answers) => {
 projectDetails()
     .then(projectAuthors)
     .then(projectResources)
-    .then(licenses)
+    // .then(licenses)
+    .then(licenseUrl)
+    // .then(projectInstruct)
     // .then(generateMarkdown)
 
     // .then(data=>generateMarkdown({
