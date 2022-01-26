@@ -6,10 +6,8 @@ const generateMarkdown = require('./utils/generateMarkdown');
 
 // TODO: Create an array of questions for user input
 // Introduction, optional sections, and project details questions
+
 const projectDetails = Answers => {
-    if (!Answers) {
-        Answers = [];
-    }
     console.log(`
 ===============================
 Welcome to the Readme Generator
@@ -18,6 +16,7 @@ Welcome to the Readme Generator
 Readme Genereator is a command-line application that dynamically generates a project README.md file based on your responses to a series of questions(e.g, Project Description, Table of Contents, Installation, Usage, License, Contributing, Tests, and Questions).
 
 `);
+
     return inquirer.prompt([
         {
             type: 'input',
@@ -72,14 +71,16 @@ Readme Genereator is a command-line application that dynamically generates a pro
             }
         }
     ])
-        .then(data => {
-            Answers.push(data)
+        .then(Answers => {
             console.log(Answers)
-            return Answers
+            return Answers;
         })
 };
-const authors = [];
+
 const projectAuthors = Answers => {
+    if (!Answers.authors) {
+        Answers.authors = [];
+    }
     return inquirer.prompt([
         {
             type: 'input',
@@ -114,20 +115,18 @@ const projectAuthors = Answers => {
             default: false
         }
     ])
-        .then(data => {
-                author = {
-                developer: data.developer,
-                githubId: data.githubId
-            };
-            authors.push(author);
+        .then((data) => {
+            //     author = {
+            //     developer: author.developer,
+            //     githubId: data.githubId
+            // };
+            Answers.authors.push(data)
             if (data.developers) {
                 return projectAuthors(Answers);
-            } else {
-                Answers.push(authors)
-                // console.log(authorsAnswers);
-                // console.log(Answers)
+            } else 
+                console.log(Answers)
                 return Answers;
-            }
+      
         })
 };
 
@@ -183,15 +182,10 @@ const projectResources = async Answers => {
         }
 
     ])
-        .then(data => {
-            const langs = data.languages + ',' + data.languagesOther
-            const languages = {
-                languages: langs,
-                license: data.licenseX
-            }
-            Answers.push(languages);
-            return Answers
-        })
+    .then((data) => {
+        console.log(data)
+        return Answers;
+    })
 };
 
 
@@ -231,7 +225,7 @@ const licenseUrl = Answers => {
     //                             html_url: data.html_url
     //                         },
     //                         Answers.push(licenseDesc)
-                
+
     //                     ))
     //                 return Answers
     //                 }
@@ -288,7 +282,7 @@ const projectInstruct = async Answers => {
                 return installPics(Answers);
             } else {
                 console.log(Answers)
-                return Answers;
+                return Answers
             }
         })
 }
@@ -375,8 +369,10 @@ const installPics = async Answers => {
 // init()
 
 projectDetails()
-    .then(projectAuthors)
-    .then(projectResources)
+    .then(Answers => {return projectAuthors(Answers)})
+    .then(Answers => {return projectResources(Answers)})
+    // .then(projectAuthors)
+    // .then(projectResources)
     // .then(licenses)
     .then(licenseUrl)
     // .then(projectInstruct)
