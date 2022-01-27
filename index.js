@@ -6,8 +6,7 @@ const generateMarkdown = require('./utils/generateMarkdown');
 
 // TODO: Create an array of questions for user input
 // Introduction, optional sections, and project details questions
-
-const projectDetails = Answers => {
+const init = () => {
     console.log(`
 ===============================
 Welcome to the Readme Generator
@@ -17,7 +16,7 @@ Readme Genereator is a command-line application that dynamically generates a pro
 
 `);
 
-    return inquirer.prompt([
+    const questions = [
         {
             type: 'input',
             name: 'title',
@@ -70,17 +69,20 @@ Readme Genereator is a command-line application that dynamically generates a pro
                 }
             }
         }
-    ])
+    ]
+    return inquirer.prompt(questions)
         .then(Answers => {
             return Answers;
         })
 };
 
+
+// project developer information. Additional developers allowed.
 const projectAuthors = Answers => {
     if (!Answers.authors) {
         Answers.authors = [];
     }
-    return inquirer.prompt([
+    questions = [
         {
             type: 'input',
             name: 'developer',
@@ -106,6 +108,19 @@ const projectAuthors = Answers => {
                     return false
                 }
             }
+        }, 
+        {
+            type: 'input',
+            name: 'email',
+            message: `What is the developer's email address? (Required)`,
+            validate: email => {
+                if (email) {
+                    return true
+                } else {
+                    console.log(`An email address is required. Please enter the developer's email address`);
+                    return false
+                }
+            }
         },
         {
             type: 'confirm',
@@ -113,11 +128,13 @@ const projectAuthors = Answers => {
             message: `Are there other developers that you'd like to cite as contributors to the project?`,
             default: false
         }
-    ])
+    ]
+    return inquirer.prompt(questions)
         .then((data) => {
             author = {
                 developer: data.developer,
-                githubId: data.githubId
+                githubId: data.githubId,
+                email: data.email
             };
             Answers.authors.push(author)
             if (data.developers) {
@@ -130,9 +147,9 @@ const projectAuthors = Answers => {
 
 
 
-//if we wanted to add a Other choice and allow a user to enter languages not listed?
+// Resources utilized in the development of the project. Additional resources not provided can included (Optional)
 const projectResources = async Answers => {
-    return inquirer.prompt([
+    questions = [
         {
             type: 'checkbox',
             name: 'languages',
@@ -150,7 +167,8 @@ const projectResources = async Answers => {
         {
             type: 'confirm',
             name: 'languagesConfirm',
-            message: `Are there development languages and libraries that were used in this project?`
+            message: `Are there development languages and libraries that were used in this project?`,
+            default: false
         },
         {
             type: 'input',
@@ -165,41 +183,128 @@ const projectResources = async Answers => {
             }
         },
         {
+            type: 'confirm',
+            name: 'licenseConfirm',
+            message: `Do you want to include a license for this project?`,
+            default: true
+        },
+        {
             type: 'list',
             name: 'licenseX',
-            message: 'Select a development license applies to this project? (Check all that apply)',
+            message: 'Please select the license that applies to this project? (Required)',
             choices: await licenses(),
+            when: ({ licenseConfirm }) => {
+                if (licenseConfirm) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
             validate: licenseX => {
                 if (licenseX) {
                     return true;
                 } else {
-                    console.log('Please select the development license that applies to this project!');
+                    console.log('Please select the license that applies to this project? (Required)');
                     return false;
                 }
             }
         }
-    ])
-        .then((data) => {
-            let langs = data.languages + ',' + data.languagesOther;
-            let langLic1 = {
-                languages: langs,
-                licenseX: data.licenseX
-            };
-            let langLic2 = {
-                languages: data.languages,
-                licenseX: data.licenseX
-            };
-            if (data.languagesConfirm) {
-                Answers = { ...Answers, ...langLic1 }
-                return Answers;
+    ]
+    return inquirer.prompt(questions)
+        .then(Answers => {
+            return Answers;
+        })
+};
+
+//project instructions
+const projectInstruct = Answers => {
+    questions = [
+        {
+            type: 'input',
+            name: 'installation',
+            message: `Please enter the install instructions for the project. (Required)`,
+            validate: installation => {
+                if (installation) {
+                    return true;
+                } else {
+                    console.log('Please enter installation instructions for the project');
+                    return false;
+                }
             }
-            else 
-                Answers = { ...Answers, ...langLic2 }
-                return Answers;
+        },
+        {
+            type: 'confirm',
+            name: 'installPicsConfirm',
+            message: 'Do you want do includes installation example pictures or videos in your installation instructions?',
+            default: false
+        }
+    ]
+    return inquirer.prompt(questions)
+        .then((data) => {
+            Answers = { ...Answers, ...data }
+            return Answers;
+        })
+}
+
+//install pictures (Optional)
+const installPics = Answers => {
+    if (Answers.installPicsConfirm) {
+        if (!Answers.iPics) {
+            Answers.iPics = [];
+        }
+        questions = [
+            {
+                type: 'input',
+                name: 'iPicDesc',
+                message: `Please provide a brief desc of the install pic. (required)`,
+                validate: ipicDesc => {
+                    if (ipicDesc) {
+                        return true;
+                    } else {
+                        console.log('Please enter a brief desc of the install pic. (required)');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'input',
+                name: 'iPicLoc',
+                message: `Please the location and name of the picture file. (required) -- Example: ./assets/pictures/pic1.png`,
+                validate: ipicDesc => {
+                    if (ipicDesc) {
+                        return true;
+                    } else {
+                        console.log('A file location and name is required. Please provide location and name of the picture file. (required) -- Example ./assets/pictures/pic1.png');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'confirm',
+                name: 'iPicsConfirm',
+                message: 'Do you want do include more example pictures or videos in your installation instructions?',
+                default: false
+            }
+        ]
+        return inquirer.prompt(questions)
+            .then((data) => {
+                inst_Pics = {
+                    iPicDesc: data.iPicDesc,
+                    iPicLoc: data.iPicLoc
+                }
+                Answers.iPics.push(inst_Pics);
+                if (data.iPicsConfirm) {
+                    return installPics(Answers);
+                } else {
+                    return Answers;
+                }
             })
+    }
+    else return Answers;
 };
 
 
+// API call to github returning a list of licenses
 const licenses = async () => {
     const licenseArr = []
     fetch("https://api.github.com/licenses")
@@ -214,9 +319,12 @@ const licenses = async () => {
     return licenseArr
 };
 
+// API calls to Github returning the license description, key, and URL
 const licenseUrl = async Answers => {
-    let licenseX = Answers.licenseX
-    fetch("https://api.github.com/licenses")
+    if (Answers.licenseConfirm) {
+        licenseX = Answers.licenseX
+    } else generateMarkdown(Answers);
+         fetch("https://api.github.com/licenses")
         .then((response) => response.json())
         .then((data) => {
             for (let i = 0; i < data.length; i++) {
@@ -234,7 +342,7 @@ const licenseUrl = async Answers => {
                                 };
                                 Answers = { ...Answers, ...licenseDesc };
                                 console.log(Answers);
-                                return Answers;
+                                generateMarkdown(Answers);
                             })
 
                     }
@@ -243,88 +351,6 @@ const licenseUrl = async Answers => {
         })
         .catch((err) => console.log(err))
 };
-
-
-const projectInstruct = Answers => {
-    return inquirer.prompt([
-        {
-            type: 'input',
-            name: 'installation',
-            message: `Please enter the install instructions for the project. (Required)`,
-            validate: installation => {
-                if (installation) {
-                    return true;
-                } else {
-                    console.log('Please enter installation instructions for the project');
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'confirm',
-            name: 'installPicsConfirm',
-            message: 'Do you want do includes installation example pictures or videos in your installation instructions?'
-        }
-    ])
-        .then((data) => {
-            Answers = { ...Answers, ...data }
-            return Answers;
-        })
-}
-
-const installPics = Answers => {
-    console.log(Answers);
-    if (!Answers.iPics) {
-        Answers.iPics = [];
-    }
-    return inquirer.prompt([
-        {
-            type: 'input',
-            name: 'iPicDesc',
-            message: `Please provide a brief desc of the install pic. (required)`,
-            validate: ipicDesc => {
-                if (ipicDesc) {
-                    return true;
-                } else {
-                    console.log('Please enter a brief desc of the install pic. (required)');
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'input',
-            name: 'iPicLoc',
-            message: `Please the location and name of the picture file. (required) -- Example: ./assets/pictures/pic1.png`,
-            validate: ipicDesc => {
-                if (ipicDesc) {
-                    return true;
-                } else {
-                    console.log('A file location and name is required. Please provide location and name of the picture file. (required) -- Example ./assets/pictures/pic1.png');
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'confirm',
-            name: 'iPicsConfirm',
-            message: 'Do you want do include more example pictures or videos in your installation instructions?'
-        }
-    ])
-        .then((data) => {
-            inst_Pics = {
-                iPicDesc: data.iPicDesc,
-                iPicLoc: data.iPicLoc
-            }
-            Answers.iPics.push(inst_Pics);
-            if (data.iPicsConfirm) {
-                return installPics(Answers);
-            } else {
-                return Answers;
-            }
-        })
-}
-
-
 
 // // TODO: Create a function to write README file
 // function  writeToFile = fileContent => {
@@ -347,19 +373,14 @@ const installPics = Answers => {
 //   };
 
 // TODO: Create a function to initialize app
-// function init() {
-//     $ ('npm install inquirer')
-// }
-
-// Function call to initialize app
-// init()
-
-projectDetails()
+init()
     .then(Answers => { return projectAuthors(Answers) })
     .then(projectResources)
     .then(projectInstruct)
     .then(installPics)
     .then(licenseUrl)
+// await .then(Answers => { return generateMarkdown(Answers) })
+
 
 
 
