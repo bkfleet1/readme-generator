@@ -11,9 +11,7 @@ const init = () => {
 ===============================
 Welcome to the Readme Generator
 ===============================
-
 Readme Genereator is a command-line application that dynamically generates a project README.md file based on your responses to a series of questions(e.g, Project Description, Table of Contents, Installation, Usage, License, Contributing, Tests, and Questions).
-
 `);
 
     const questions = [
@@ -108,7 +106,7 @@ const projectAuthors = Answers => {
                     return false
                 }
             }
-        }, 
+        },
         {
             type: 'input',
             name: 'email',
@@ -176,30 +174,17 @@ const projectResources = async Answers => {
             message: `Please enter other development languages and libraries used in this project not previously cited, separating each with a comma.`,
             when: ({ languagesConfirm }) => {
                 if (languagesConfirm) {
-                    return true;
+                    return true
                 } else {
-                    return false;
+                    return false
                 }
             }
-        },
-        {
-            type: 'confirm',
-            name: 'licenseConfirm',
-            message: `Do you want to include a license for this project?`,
-            default: true
         },
         {
             type: 'list',
             name: 'licenseX',
             message: 'Please select the license that applies to this project? (Required)',
             choices: await licenses(),
-            when: ({ licenseConfirm }) => {
-                if (licenseConfirm) {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
             validate: licenseX => {
                 if (licenseX) {
                     return true;
@@ -211,7 +196,22 @@ const projectResources = async Answers => {
         }
     ]
     return inquirer.prompt(questions)
-        .then(Answers => {
+        .then((data) => {
+            let langs = data.languages + ',' + data.languagesOther;
+            let langLic1 = {
+                languages: langs,
+                licenseX: data.licenseX
+            };
+            let langLic2 = {
+                languages: data.languages,
+                licenseX: data.licenseX
+            };
+            if (data.languagesConfirm) {
+                Answers = { ...Answers, ...langLic1 }
+                return Answers;
+            }
+            else
+                Answers = { ...Answers, ...langLic2 }
             return Answers;
         })
 };
@@ -219,6 +219,32 @@ const projectResources = async Answers => {
 //project instructions
 const projectInstruct = Answers => {
     questions = [
+        {
+            type: 'input',
+            name: 'usage',
+            message: `Please enter any usage informations related to the project. (Required)`,
+            validate: usage => {
+                if (usage) {
+                    return true;
+                } else {
+                    console.log('Please enter any usage informations related to the project.');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'test',
+            message: `Please any testing resources available for the project. (Required)`,
+            validate: usage => {
+                if (usage) {
+                    return true;
+                } else {
+                    console.log('Please enter any usage informations related to the project.');
+                    return false;
+                }
+            }
+        },
         {
             type: 'input',
             name: 'installation',
@@ -306,7 +332,7 @@ const installPics = Answers => {
 
 // API call to github returning a list of licenses
 const licenses = async () => {
-    const licenseArr = []
+    const licenseArr = ['None',]
     fetch("https://api.github.com/licenses")
         .then((response) => response.json())
         .then((data) => {
@@ -321,10 +347,18 @@ const licenses = async () => {
 
 // API calls to Github returning the license description, key, and URL
 const licenseUrl = async Answers => {
-    if (Answers.licenseConfirm) {
+    if (Answers.licenseX = 'None') {
+        licenseDesc = {
+            licenseKey: Answers.licenseX,
+            licenseDesc: Answers.licenseX,
+            html_url: Answers.licenseX
+        };
+        Answers = { ...Answers, ...licenseDesc };
+        console.log(Answers);
+        return generateMarkdown(Answers);
+    } else
         licenseX = Answers.licenseX
-    } else generateMarkdown(Answers);
-         fetch("https://api.github.com/licenses")
+    fetch("https://api.github.com/licenses")
         .then((response) => response.json())
         .then((data) => {
             for (let i = 0; i < data.length; i++) {
@@ -342,7 +376,7 @@ const licenseUrl = async Answers => {
                                 };
                                 Answers = { ...Answers, ...licenseDesc };
                                 console.log(Answers);
-                                generateMarkdown(Answers);
+                                return generateMarkdown(Answers);
                             })
 
                     }
@@ -380,7 +414,4 @@ init()
     .then(installPics)
     .then(licenseUrl)
 // await .then(Answers => { return generateMarkdown(Answers) })
-
-
-
 
