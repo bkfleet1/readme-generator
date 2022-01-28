@@ -1,16 +1,20 @@
-// TODO: Create a function that returns a license badge based on which license is passed in
-// If there is no license, return an empty string
-function renderLicenseBadge(license) { }
-
-// TODO: Create a function that returns the license link
-// If there is no license, return an empty string
-function renderLicenseLink(license) { }
-
-https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json
-
-// TODO: Create a function that returns the license section of README
-// If there is no license, return an empty string
-function renderLicenseSection(license) { }
+// // TODO: Create a function that returns a license badge based on which license is passed in
+// // If there is no license, return an empty string
+function renderLicenseBadge(Answers) {
+    const licenseBadge = Answers.licenseKey.replace('-', ' ');
+    return `![license badge](https://img.shields.io/badge/License-${encodeURIComponent(licenseBadge)}-blue)`
+};
+// // TODO: Create a function that returns the license link
+// // If there is no license, return an empty string
+function renderLicenseLink(Answers) {
+  return `[License Link](${Answers.html_url})`
+};
+// // TODO: Create a function that returns the license section of README
+// // If there is no license, return an empty string
+function renderLicenseSection(Answers) {
+ return `## [License](#license) ![license badge](https://img.shields.io/badge/License-${encodeURIComponent(licenseBadge)}-blue) \
+${Answers.licenseDesc}`
+};
 
 // function renderContributor(Answers) {
 // for (let index = 0; index < Answers.authors.length; index++) {
@@ -21,12 +25,15 @@ function renderLicenseSection(license) { }
 // }
 
 // TODO: Create a function to generate markdown for README
-const generateMarkdown = Answers => {
-  const licenseBadge = Answers.licenseKey.replace('-',' ');
-  console.log(licenseBadge); 
+const generateMarkdown = async Answers => {
 
 
-  console.log(`# [${Answers.title}](#title)
+  // licenseBadge = renderLicenseBadge(Answers);
+  // licenseLink = renderLicenseLink(Answers);
+  // licenseSection = renderLicenseSection(Answers);
+
+  if (await(Answers.licenseKey) === 'None') {
+  return `# [${Answers.title}](#title)
 
   ## [Description](#description)
   ${Answers.description}
@@ -38,9 +45,8 @@ const generateMarkdown = Answers => {
   > * [Title](#title)
   > * [Description](#description)
   > * [Contributing](#contributing)
-  > * [Installation](#installation) ![license badge](https://img.shields.io/badge/License-${encodeURIComponent(licenseBadge)}-blue)
+  > * [Installation](#installation) 
   > * [Usage](#usage)
-  > * [License](#license)
   > * [Tests](#tests)
   > * [Questions](#questions)
 
@@ -50,18 +56,43 @@ const generateMarkdown = Answers => {
   ${Answers.installation}
 
   ## [Usage](#usage)
-
-  ## [License](#license)
-  ${Answers.licenseDesc}
-  Full License: ${Answers.html_url}
-
+  
   ## [Tests](#tests)
-
 
   ## [Questions](#questions)
   Please feel free to use the contact information below for any project questions
 
-`)
+`} else 
+  return `# [${Answers.title}](#title)
+
+  ## [Description](#description)
+  ${Answers.description}
+
+  >> - Deployed Project URL: ${Answers.deployedLink}
+  >> - Project Repository URL: ${Answers.repoLink}
+
+  ## Table of Contents
+  > * [Title](#title)
+  > * [Description](#description)
+  > * [Contributing](#contributing)
+  > * [Installation](#installation) 
+  > * [Usage](#usage)
+  > * [Tests](#tests)
+  > * [Questions](#questions)
+
+  ## [Contributing](#contributing)
+
+  ## [Installation](#installation)
+  ${Answers.installation}
+
+  ## [Usage](#usage)
+  
+  ## [Tests](#tests)
+
+  ## [Questions](#questions)
+  Please feel free to use the contact information below for any project questions
+
+`
 }
 
 module.exports = generateMarkdown;

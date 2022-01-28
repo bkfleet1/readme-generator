@@ -1,5 +1,5 @@
 // TODO: Include packages needed for this application
-const writeToFile = require('fs');
+const fs = require('fs');
 const inquirer = require('inquirer');
 const fetch = require("node-fetch");
 const generateMarkdown = require('./utils/generateMarkdown');
@@ -76,7 +76,7 @@ Readme Genereator is a command-line application that dynamically generates a pro
 
 
 // project developer information. Additional developers allowed.
-const projectAuthors = Answers => {
+const projectAuthors = (Answers) => {
     if (!Answers.authors) {
         Answers.authors = [];
     }
@@ -346,18 +346,18 @@ const licenses = async () => {
 };
 
 // API calls to Github returning the license description, key, and URL
-const licenseUrl = async Answers => {
-    if (Answers.licenseX = 'None') {
+const licenseUrl = Answers => {
+    licenseX = Answers.licenseX;
+    if (licenseX === 'None') {
         licenseDesc = {
-            licenseKey: Answers.licenseX,
-            licenseDesc: Answers.licenseX,
-            html_url: Answers.licenseX
+            licenseKey: licenseX,
+            licenseDesc: licenseX,
+            html_url: licenseX
         };
         Answers = { ...Answers, ...licenseDesc };
         console.log(Answers);
-        return generateMarkdown(Answers);
-    } else
-        licenseX = Answers.licenseX
+        return Answers;
+    } else {   
     fetch("https://api.github.com/licenses")
         .then((response) => response.json())
         .then((data) => {
@@ -376,7 +376,7 @@ const licenseUrl = async Answers => {
                                 };
                                 Answers = { ...Answers, ...licenseDesc };
                                 console.log(Answers);
-                                return generateMarkdown(Answers);
+                                return Answers;
                             })
 
                     }
@@ -384,27 +384,29 @@ const licenseUrl = async Answers => {
             }
         })
         .catch((err) => console.log(err))
+}
 };
 
 // // TODO: Create a function to write README file
-// function  writeToFile = fileContent => {
-//     return new Promise((resolve, reject) => {
-//       fs.writeFile('./dist/README.md', fileContent, err => {
-//         // if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
-//         if (err) {
-//           reject(err);
-//           // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
-//           return;
-//         }
+const writeToFile = data => {
+    // return new Promise((resolve, reject) => {
+        console.log((data))
+      fs.writeFileSync('./dist/README.md', data)
+        // if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
+        // if (err) {
+        //   reject(err);
+        //   // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
+        //   return;
+        // }
 
-//         // if everything went well, resolve the Promise and send the successful data to the `.then()` method
-//         resolve({
-//           ok: true,
-//           message: 'File created!'
-//         });
-//       });
-//     });
-//   };
+        // // if everything went well, resolve the Promise and send the successful data to the `.then()` method
+        // resolve({
+        //   ok: true,
+        //   message: 'File created!'
+        // });
+    //   });
+    // });
+  };
 
 // TODO: Create a function to initialize app
 init()
@@ -413,5 +415,6 @@ init()
     .then(projectInstruct)
     .then(installPics)
     .then(licenseUrl)
+    .then(async Answers => { return generateMarkdown(await(Answers)) })
+    .then(writeToFile)
 // await .then(Answers => { return generateMarkdown(Answers) })
-
