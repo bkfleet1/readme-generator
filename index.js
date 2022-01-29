@@ -2,13 +2,65 @@
 const { NONAME } = require('dns');
 const fs = require('fs');
 const inquirer = require('inquirer');
-const fetch = require("node-fetch");
+const fetch = require(`node-fetch`);
 const generateMarkdown = require('./utils/generateMarkdown');
-const licenseData = require('./utils/generateMarkdown');
+// const licenseData = require('./utils/generateMarkdown');
 
 // TODO: Create an array of questions for user input
 // Introduction, optional sections, and project details questions
-const init = () => {
+
+const licenseArr = ['None']
+// const licenseArr2 = [{ licenseName: 'None', licenseUrl: 'None' }]
+
+
+// API call to github returning a list of licenses
+const init = async () => {
+    fetch("https://api.github.com/licenses")
+        .then((response) => response.json())
+        .then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                const licenseName = data[i].name
+                // const licenseUrl = data[i].url
+                // const licenseNames = {
+                //     licenseName: licenseName,
+                //     licenseUrl: licenseUrl
+                // }
+                licenseArr.push(licenseName)
+                // licenseArr2.push(licenseNames)
+            }
+        })
+        .catch((err) => console.log(err))
+        // return licenseArr2
+};
+
+// // API calls to Github returning the license description, key, and URL
+const licenseArr3 = [{ licenseKey: `None`, licenseDesc: `None`, html_url: `None` }];
+
+// // API calls to Github returning the license description, key, and URL
+function licenseData() {
+  fetch("https://api.github.com/licenses")
+    .then((response) => response.json())
+    .then((data) => {
+      for (let i = 0; i < data.length; i++) {
+        const licenseUrl = data[i].url
+        fetch(`${licenseUrl}`)
+          .then((response) => response.json())
+          .then((data) => {
+            licenseDesc = {
+              licenseKey: data.key,
+              licenseDesc: data.description,
+              html_url: data.html_url,
+              licenseName: data.name
+            }
+            licenseArr3.push(licenseDesc)
+          })
+      }
+    })
+    .catch((err) => console.log(err))
+
+};
+
+const projectInit = () => {
     console.log(`
 ===============================
 Welcome to the Readme Generator
@@ -186,7 +238,7 @@ const projectResources = async Answers => {
             type: 'list',
             name: 'licenseX',
             message: 'Please select the license that applies to this project? (Required)',
-            choices: await licenses(),
+            choices: licenseArr,
             validate: licenseX => {
                 if (licenseX) {
                     return true;
@@ -269,93 +321,39 @@ const projectInstruct = Answers => {
 }
 
 
-const licenseArr = ['None']
-const licenseNameLists = [{ licenseName: 'None', licenseUrl: 'None' }]
-
-// API call to github returning a list of licenses
-const licenses = async () => {
-    fetch("https://api.github.com/licenses")
-        .then((response) => response.json())
-        .then((data) => {
-            for (let i = 0; i < data.length; i++) {
-                const licenseName = data[i].name
-                const licenseUrl = data[i].url
-                const licenseNameList = {
-                    licenseName: licenseName,
-                    licenseUrl: licenseUrl
-                }
-                licenseArr.push(licenseName)
-                licenseNameLists.push(licenseNameList)
-            }
-        })
-        .catch((err) => console.log(err))
-    return licenseArr
-};
-
-// API calls to Github returning the license description, key, and URL
-const licenseUrl = (Answers, licenseNameLists) => {
-    const licenseX = Answers.licenseX
-    const licenseLinx = licenseNameLists.filter(function (el) {
-        return el.licenseName == licenseX
-    });
-    const licenseVal = licenseLinx.map(({ licenseUrl }) => licenseUrl);
 
 
-    if (licenseX == 'None') {
-        const licenseDesc = {
-            licenseKey: 'None',
-            licenseDesc: 'None',
-            html_url: 'None'
-        }
-        Answers = { ...Answers, ...licenseDesc1 }
-        return generateMarkdown(Answers);
-    } else {
-        fetch(`${licenseVal}`)
-        .then((response) => response.json())
-        .then(async (data) => {
-            const licenseDesc2 = {
-                licenseKey: data.key,
-                licenseDesc: data.description,
-                html_url: data.html_url
-            }
-            Answers = { ...Answers, ...licenseDesc2 }
-            console.log("apicall", Answers)
-            return generateMarkdown(Answers);
-            })
-            
-    }
-    
-};
 
 
 
 // // TODO: Create a function to write README file
 const writeToFile = data => {
-//     //     // return new Promise((resolve, reject) => {
-        console.log((data))
+    //     //     // return new Promise((resolve, reject) => {
+    console.log((data))
     fs.writeFileSync('./dist/README.md', data)
-// if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
-// if (err) {
-//   reject(err);
-//   // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
-//   return;
-// }
+    // if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
+    // if (err) {
+    //   reject(err);
+    //   // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
+    //   return;
+    // }
 
-// // if everything went well, resolve the Promise and send the successful data to the `.then()` method
-// resolve({
-//   ok: true,
-//   message: 'File created!'
-// });
-//   });
-// });
+    // // if everything went well, resolve the Promise and send the successful data to the `.then()` method
+    // resolve({
+    //   ok: true,
+    //   message: 'File created!'
+    // });
+    //   });
+    // });
 };
 
 // TODO: Create a function to initialize app
 init()
+    .then(licenseData)
+    .then(projectInit)
     .then(Answers => { return projectAuthors(Answers) })
-    .then(projectResources)
-    .then(projectInstruct)
-    .then(Answers => { return licenseUrl(Answers, licenseNameLists) })
-    .then(async Answers => { return await generateMarkdown(Answers) })
-    .then(writeToFile)
+    .then(Answers => { return projectResources(Answers) })
+    .then(Answers => { return projectInstruct (Answers) })
+    .then(Answers => { return generateMarkdown(Answers,licenseArr3) })
+    // .then(writeToFile)
 

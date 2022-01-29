@@ -1,30 +1,6 @@
 const fetch = require("node-fetch");
 
-// const licenseArr2 = [];
 
-// // API calls to Github returning the license description, key, and URL
-// const licenseData = async () => {
-//   fetch("https://api.github.com/licenses")
-//     .then((response) => response.json())
-//     .then((data) => {
-//       for (let i = 0; i < data.length; i++) {
-//         const licenseUrl = data[i].url
-//         fetch(`${licenseUrl}`)
-//           .then((response) => response.json())
-//           .then((data) => {
-//             licenseDesc = {
-//               licenseKey: data.key,
-//               licenseDesc: data.description,
-//               html_url: data.html_url,
-//               licenseName: data.name
-//             }
-//             licenseArr2.push(licenseDesc)
-//           })
-//       }
-//     })
-//     .catch((err) => console.log(err))
-
-// };
 
 
 // // // TODO: Create a function that returns a license badge based on which license is passed in
@@ -54,56 +30,58 @@ const fetch = require("node-fetch");
 // }
 
 // TODO: Create a function to generate markdown for README
-function generateMarkdown(Answers) {
+function generateMarkdown(Answers, licenseArr3) {
   // licenseBadge = renderLicenseBadge(Answers);
   // licenseLink = renderLicenseLink(Answers);
   // licenseSection = renderLicenseSection(Answers);
+  console.log(Answers);
+  console.log(licenseArr3);
 
-  if ((Answers.licenseX) === 'None') {
-    return `# [${Answers.title}](#title)
-## [Description](#description)
-${Answers.description}
->> - Deployed Project URL: ${Answers.deployedLink}
->> - Project Repository URL: ${Answers.repoLink}
-## Table of Contents
-> * [Title](#title)
-> * [Description](#description)
-> * [Contributing](#contributing)
-> * [Installation](#installation) 
-> * [Usage](#usage)
-> * [Tests](#tests)
-> * [Questions](#questions)
-## [Contributing](#contributing)
-## [Installation](#installation)
-${Answers.installation}
-## [Usage](#usage)
+//   if ((Answers.licenseX) === 'None') {
+//     return `# [${Answers.title}](#title)
+// ## [Description](#description)
+// ${Answers.description}
+// >> - Deployed Project URL: ${Answers.deployedLink}
+// >> - Project Repository URL: ${Answers.repoLink}
+// ## Table of Contents
+// > * [Title](#title)
+// > * [Description](#description)
+// > * [Contributing](#contributing)
+// > * [Installation](#installation) 
+// > * [Usage](#usage)
+// > * [Tests](#tests)
+// > * [Questions](#questions)
+// ## [Contributing](#contributing)
+// ## [Installation](#installation)
+// ${Answers.installation}
+// ## [Usage](#usage)
 
-## [Tests](#tests)
-## [Questions](#questions)
-Please feel free to use the contact information below for any project questions
-`} else
-    return `# [${Answers.title}](#title)
-## [Description](#description)
-${Answers.description}
->> - Deployed Project URL: ${Answers.deployedLink}
->> - Project Repository URL: ${Answers.repoLink}
-## Table of Contents
-> * [Title](#title)
-> * [Description](#description)
-> * [Contributing](#contributing)
-> * [Installation](#installation) 
-> * [Usage](#usage)
-> * [Tests](#tests)
-> * [Questions](#questions)
-## [Contributing](#contributing)
-## [Installation](#installation)
-${Answers.installation}
-## [Usage](#usage)
+// ## [Tests](#tests)
+// ## [Questions](#questions)
+// Please feel free to use the contact information below for any project questions
+// `} else
+//     return `# [${Answers.title}](#title)
+// ## [Description](#description)
+// ${Answers.description}
+// >> - Deployed Project URL: ${Answers.deployedLink}
+// >> - Project Repository URL: ${Answers.repoLink}
+// ## Table of Contents
+// > * [Title](#title)
+// > * [Description](#description)
+// > * [Contributing](#contributing)
+// > * [Installation](#installation) 
+// > * [Usage](#usage)
+// > * [Tests](#tests)
+// > * [Questions](#questions)
+// ## [Contributing](#contributing)
+// ## [Installation](#installation)
+// ${Answers.installation}
+// ## [Usage](#usage)
 
-## [Tests](#tests)
-## [Questions](#questions)
-Please feel free to use the contact information below for any project questions
-`
+// ## [Tests](#tests)
+// ## [Questions](#questions)
+// Please feel free to use the contact information below for any project questions
+// `
 }
 
 module.exports = generateMarkdown;
