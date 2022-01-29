@@ -1,8 +1,10 @@
 // TODO: Include packages needed for this application
+const { NONAME } = require('dns');
 const fs = require('fs');
 const inquirer = require('inquirer');
 const fetch = require("node-fetch");
 const generateMarkdown = require('./utils/generateMarkdown');
+const licenseData = require('./utils/generateMarkdown');
 
 // TODO: Create an array of questions for user input
 // Introduction, optional sections, and project details questions
@@ -257,12 +259,6 @@ const projectInstruct = Answers => {
                     return false;
                 }
             }
-        },
-        {
-            type: 'confirm',
-            name: 'installPicsConfirm',
-            message: 'Do you want do includes installation example pictures or videos in your installation instructions?',
-            default: false
         }
     ]
     return inquirer.prompt(questions)
@@ -272,73 +268,24 @@ const projectInstruct = Answers => {
         })
 }
 
-//install pictures (Optional)
-const installPics = Answers => {
-    if (Answers.installPicsConfirm) {
-        if (!Answers.iPics) {
-            Answers.iPics = [];
-        }
-        questions = [
-            {
-                type: 'input',
-                name: 'iPicDesc',
-                message: `Please provide a brief desc of the install pic. (required)`,
-                validate: ipicDesc => {
-                    if (ipicDesc) {
-                        return true;
-                    } else {
-                        console.log('Please enter a brief desc of the install pic. (required)');
-                        return false;
-                    }
-                }
-            },
-            {
-                type: 'input',
-                name: 'iPicLoc',
-                message: `Please the location and name of the picture file. (required) -- Example: ./assets/pictures/pic1.png`,
-                validate: ipicDesc => {
-                    if (ipicDesc) {
-                        return true;
-                    } else {
-                        console.log('A file location and name is required. Please provide location and name of the picture file. (required) -- Example ./assets/pictures/pic1.png');
-                        return false;
-                    }
-                }
-            },
-            {
-                type: 'confirm',
-                name: 'iPicsConfirm',
-                message: 'Do you want do include more example pictures or videos in your installation instructions?',
-                default: false
-            }
-        ]
-        return inquirer.prompt(questions)
-            .then((data) => {
-                inst_Pics = {
-                    iPicDesc: data.iPicDesc,
-                    iPicLoc: data.iPicLoc
-                }
-                Answers.iPics.push(inst_Pics);
-                if (data.iPicsConfirm) {
-                    return installPics(Answers);
-                } else {
-                    return Answers;
-                }
-            })
-    }
-    else return Answers;
-};
 
+const licenseArr = ['None']
+const licenseNameLists = [{ licenseName: 'None', licenseUrl: 'None' }]
 
 // API call to github returning a list of licenses
 const licenses = async () => {
-    const licenseArr = ['None',]
     fetch("https://api.github.com/licenses")
         .then((response) => response.json())
         .then((data) => {
             for (let i = 0; i < data.length; i++) {
                 const licenseName = data[i].name
+                const licenseUrl = data[i].url
+                const licenseNameList = {
+                    licenseName: licenseName,
+                    licenseUrl: licenseUrl
+                }
                 licenseArr.push(licenseName)
+                licenseNameLists.push(licenseNameList)
             }
         })
         .catch((err) => console.log(err))
@@ -346,75 +293,69 @@ const licenses = async () => {
 };
 
 // API calls to Github returning the license description, key, and URL
-const licenseUrl = Answers => {
-    licenseX = Answers.licenseX;
-    if (licenseX === 'None') {
-        licenseDesc = {
-            licenseKey: licenseX,
-            licenseDesc: licenseX,
-            html_url: licenseX
-        };
-        Answers = { ...Answers, ...licenseDesc };
-        console.log(Answers);
-        return Answers;
-    } else {   
-    fetch("https://api.github.com/licenses")
-        .then((response) => response.json())
-        .then((data) => {
-            for (let i = 0; i < data.length; i++) {
-                const licenseName = data[i].name
-                const licenseUrl = data[i].url
-                {
-                    if (licenseName === licenseX) {
-                        fetch(`${licenseUrl}`)
-                            .then((response) => response.json())
-                            .then((data) => {
-                                licenseDesc = {
-                                    licenseKey: data.key,
-                                    licenseDesc: data.description,
-                                    html_url: data.html_url
-                                };
-                                Answers = { ...Answers, ...licenseDesc };
-                                console.log(Answers);
-                                return Answers;
-                            })
+const licenseUrl = (Answers, licenseNameLists) => {
+    const licenseX = Answers.licenseX
+    const licenseLinx = licenseNameLists.filter(function (el) {
+        return el.licenseName == licenseX
+    });
+    const licenseVal = licenseLinx.map(({ licenseUrl }) => licenseUrl);
 
-                    }
-                }
+
+    if (licenseX == 'None') {
+        const licenseDesc = {
+            licenseKey: 'None',
+            licenseDesc: 'None',
+            html_url: 'None'
+        }
+        Answers = { ...Answers, ...licenseDesc1 }
+        return generateMarkdown(Answers);
+    } else {
+        fetch(`${licenseVal}`)
+        .then((response) => response.json())
+        .then(async (data) => {
+            const licenseDesc2 = {
+                licenseKey: data.key,
+                licenseDesc: data.description,
+                html_url: data.html_url
             }
-        })
-        .catch((err) => console.log(err))
-}
+            Answers = { ...Answers, ...licenseDesc2 }
+            console.log("apicall", Answers)
+            return generateMarkdown(Answers);
+            })
+            
+    }
+    
 };
+
+
 
 // // TODO: Create a function to write README file
 const writeToFile = data => {
-    // return new Promise((resolve, reject) => {
+//     //     // return new Promise((resolve, reject) => {
         console.log((data))
-      fs.writeFileSync('./dist/README.md', data)
-        // if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
-        // if (err) {
-        //   reject(err);
-        //   // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
-        //   return;
-        // }
+    fs.writeFileSync('./dist/README.md', data)
+// if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
+// if (err) {
+//   reject(err);
+//   // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
+//   return;
+// }
 
-        // // if everything went well, resolve the Promise and send the successful data to the `.then()` method
-        // resolve({
-        //   ok: true,
-        //   message: 'File created!'
-        // });
-    //   });
-    // });
-  };
+// // if everything went well, resolve the Promise and send the successful data to the `.then()` method
+// resolve({
+//   ok: true,
+//   message: 'File created!'
+// });
+//   });
+// });
+};
 
 // TODO: Create a function to initialize app
 init()
     .then(Answers => { return projectAuthors(Answers) })
     .then(projectResources)
     .then(projectInstruct)
-    .then(installPics)
-    .then(licenseUrl)
-    .then(async Answers => { return generateMarkdown(await(Answers)) })
+    .then(Answers => { return licenseUrl(Answers, licenseNameLists) })
+    .then(async Answers => { return await generateMarkdown(Answers) })
     .then(writeToFile)
-// await .then(Answers => { return generateMarkdown(Answers) })
+
