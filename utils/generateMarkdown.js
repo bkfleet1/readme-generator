@@ -1,4 +1,3 @@
-const fetch = require("node-fetch");
 const stripchar = require('stripchar').StripChar;
 
 //Creates a function that returns a license badge based on which license is passed in
@@ -10,7 +9,7 @@ function renderLicenseBadge(licenseKeys) {
 // Creates a function that returns the license link
 function renderLicenseLink(licenseDetails) {
   const licenseWeb = licenseDetails.map(({ html_url }) => html_url);
-  return `[License Link](${licenseWeb})`
+  return `[Link complete license](${licenseWeb})`
 };
 // Creates a function that returns the license section of README
 function renderLicenseSection(licenseDetails,Answers) {
