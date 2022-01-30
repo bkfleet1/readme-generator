@@ -1,36 +1,43 @@
-# [ssdadddddddddddddsdsdsdsdassdsd](#title)
+# [project1](#title)
 
 ## [Description](#description)
-   ewrrrrrrrrrrerweewdffsdfdsfdf
->> - Deployed Project URL: dfweeewwewggdfgdgfdfgdfdfgdfggdf
->> - Project Repository URL: fsdfsdffvgfgdgfdgfgdfdfgdgdd
+   short description
+>> - Deployed Project URL: 2nd url
+>> - Project Repository URL: github url
+![license badge](https://img.shields.io/badge/License-Apache--2--0-blue)
 
 ## Table of Contents
 > * [Title](#title)
 > * [Description](#description)
-> * [Contributing](#contributing)
+> * [Developer](#developer)
+> * [Resources](#resources)
 > * [Installation](#installation) 
-> * [license](#license) ![license badge](https://img.shields.io/badge/License-Apache--2--0-blue)
+> * [license](#license) 
 > * [Usage](#usage)
 > * [Tests](#tests)
 > * [Questions](#questions)
 
-## [Contributing](#contributing)
+## [Desveloper](#developer)
+[Brad Kelley](https://github.com/github)
+
+## [Resources](#resources)
+The following resources were used in the development of this project.
+JavaScript,HTML,CSS,jQuery,Bootstrap,Node,Inquirer
 
 ## [Installation](#installation)
->> sddfsfsfdfsdfdsfsdsf
+insltlall
 
 ## [License](#license)
-  
-  >> A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code.
->> [License Link](http://choosealicense.com/licenses/apache-2.0/)
+  Apache License 2.0
+  A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code.
+[License Link](http://choosealicense.com/licenses/apache-2.0/)
 
 ## [Usage](#usage)
-   dssdfdfdsdsdfsdfs
+sage
 
 ## [Tests](#tests)
-   sddsfdfsfdsfsdfsdfdfsf
+testing info
 
 ## [Questions](#questions)
-Please feel free to use the contact information below for any project questions.
+Please email [email@support.com](mailto:email@support.com) with any project questions.
 
