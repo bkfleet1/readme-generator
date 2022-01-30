@@ -28,9 +28,6 @@ const licenseBadging = renderLicenseBadge(licenseKeys);
 const licenseLink = renderLicenseLink(licenseDetails);
 const licenseSection = renderLicenseSection(licenseDetails,Answers);
 
-  console.log(Answers);
-  console.log(licenseDetails);
-
  if ((Answers.licenseX) === 'None') {
     return `# [${Answers.title}](#title)
 
