@@ -50,7 +50,7 @@ ${Answers.description}
 > * [Tests](#tests)
 > * [Questions](#questions)
 
-## [Desveloper](#developer)
+## [Developer](#developer)
 [${Answers.developer}](https://github.com/${Answers.githubId})
 
 ## [Resources](#resources)
@@ -89,7 +89,7 @@ ${licenseBadging}
 > * [Tests](#tests)
 > * [Questions](#questions)
 
-## [Desveloper](#developer)
+## [Developer](#developer)
 [${Answers.developer}](https://github.com/${Answers.githubId})
 
 ## [Resources](#resources)
