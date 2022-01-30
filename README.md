@@ -3,6 +3,7 @@
 ## [Description](#description)
 A command-line application that dynamically generates a professional README.md file from a user's input using javascript, node js, and Inquirer.
 
+![100% Javascript](https://img.shields.io/badge/Javascript-100%-green)`
 >> - Project Repository URL: https://github.com/bkfleet1/readme-generator
 ![Dynamic Readme MD Generator repository](./assets/images/repository.png)
 
@@ -35,7 +36,7 @@ The following steps are required to execute the Dynamic Readme MD Generator code
 
 ## [Usage](#usage)
 After installation process, you can execute the application typing "node index" and press enter. As illustrated in the image below, you should be presented with a welcome message and prompted for the title of your project.
-![Dynamic Readme MD Generator prompt](./assets/images/usage.png)
+![Dynamic Readme MD Generator prompt](./assets/images/usage1.png)
 
 The application will present you with a series of questions. The responses you provide to each question are included in the README.md file the application will generate, which you will find in the application's ./dist directory.
 
