@@ -10,9 +10,7 @@ const generateMarkdown = require('./utils/generateMarkdown');
 // Introduction, optional sections, and project details questions
 
 const licenseArr = ['None']
-// const licenseArr2 = [{ licenseName: 'None', licenseUrl: 'None' }]
-
-
+const licenseArr3 = [{ licenseKey: `None`, licenseDesc: `None`, html_url: `None` }];
 // API call to github returning a list of licenses
 const init = async () => {
     fetch("https://api.github.com/licenses")
@@ -20,23 +18,13 @@ const init = async () => {
         .then((data) => {
             for (let i = 0; i < data.length; i++) {
                 const licenseName = data[i].name
-                // const licenseUrl = data[i].url
-                // const licenseNames = {
-                //     licenseName: licenseName,
-                //     licenseUrl: licenseUrl
-                // }
                 licenseArr.push(licenseName)
-                // licenseArr2.push(licenseNames)
             }
         })
         .catch((err) => console.log(err))
-        // return licenseArr2
 };
 
-// // API calls to Github returning the license description, key, and URL
-const licenseArr3 = [{ licenseKey: `None`, licenseDesc: `None`, html_url: `None` }];
-
-// // API calls to Github returning the license description, key, and URL
+// API calls to Github returning the license description, key, and URL
 function licenseData() {
   fetch("https://api.github.com/licenses")
     .then((response) => response.json())
@@ -47,7 +35,7 @@ function licenseData() {
           .then((response) => response.json())
           .then((data) => {
             licenseDesc = {
-              licenseKey: data.key,
+              licenseKey: data.spdx_id,
               licenseDesc: data.description,
               html_url: data.html_url,
               licenseName: data.name
@@ -355,5 +343,5 @@ init()
     .then(Answers => { return projectResources(Answers) })
     .then(Answers => { return projectInstruct (Answers) })
     .then(Answers => { return generateMarkdown(Answers,licenseArr3) })
-    // .then(writeToFile)
+    .then(writeToFile)
 
