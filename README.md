@@ -35,12 +35,12 @@ The following steps are required to execute the Dynamic Readme MD Generator code
 > 6. Finally, iyou need to nstall stripchar, an npm package that removes special characters that prevent the creatiion of badges in your readme file. Simply type "npm i stripchar" and press enter.
 
 ## [Usage](#usage)
-After installation process, you can execute the application typing "node index" and press enter. As illustrated in the image below, you should be presented with a welcome message and prompted for the title of your project.
+After the installation process, you can execute the application typing "node index" and press enter. You should be presented with a welcome message and prompted for the title of your project, as shown below.
 ![Dynamic Readme MD Generator prompt](./assets/images/usage1.png)
 
-The application will present you with a series of questions. The responses you provide to each question are included in the README.md file the application will generate, which you will find in the application's ./dist directory.
+The application will present you with a series of questions. The responses you provide to each question are included in the README.md file the application will generate, which you will find in the application's ./dist directory. Note that the application overwrites the content of any existing readme.md file in this directory.
 
-It is important to remember that the file being created is a markdown.md file. Thus, your input must be written in markdown syntax to present correctly when viewed. You can reference the [markdown guide](https://www.markdownguide.org/basic-syntax) for basic syntax.
+It is important to note that the file being created is a markdown.md file. Thus, your responses to the application's prompts should be written in markdown syntax. You can reference the [markdown guide](https://www.markdownguide.org/basic-syntax) for basic syntax.
 
 ## [Tests](#tests)
 No testing routines are relevant for this application.
