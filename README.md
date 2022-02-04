@@ -7,7 +7,7 @@ A command-line application that dynamically generates a professional README.md f
 >> - Project Repository URL: https://github.com/bkfleet1/readme-generator
 ![Dynamic Readme MD Generator repository](./assets/images/repository.png)
 >> - Project Video URL: https://watch.screencastify.com/v/H1glvLWBQsTvY2qrMMcy
-![watch the Dynamic Readme MD Generator video)[https://watch.screencastify.com/v/H1glvLWBQsTvY2qrMMcy]
+![watch the Dynamic Readme MD Generator video](https://watch.screencastify.com/v/H1glvLWBQsTvY2qrMMcy)
 ## Table of Contents
 > * [Title](#title)
 > * [Description](#description)
