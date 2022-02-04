@@ -4,7 +4,7 @@
 A command-line application that dynamically generates a professional README.md file from a user's input using javascript, node js, and Inquirer.
 
 ![100% Javascript](https://img.shields.io/badge/javascript-100%25-green)
->> - Project Video URL: <a href="https://watch.screencastify.com/v/H1glvLWBQsTvY2qrMMcy" target="_blank">https://watch.screencastify.com/v/H1glvLWBQsTvY2qrMMcy</a>
+>> - Project Video URL: [https://watch.screencastify.com/v/H1glvLWBQsTvY2qrMMcy](https://watch.screencastify.com/v/H1glvLWBQsTvY2qrMMcy)
 >> - Project Repository URL: https://github.com/bkfleet1/readme-generator
 ![Dynamic Readme MD Generator repository](./assets/images/repository.png)
 
