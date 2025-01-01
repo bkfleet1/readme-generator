@@ -23,9 +23,9 @@
   },
   "homepage": "https://github.com/bkfleet1/readme-generator#readme",
   "dependencies": {
-    "inquirer": "^8.2.0",
-    "node-fetch": "^2.6.7",
-    "node-localstorage": "^2.2.1",
-    "stripchar": "^1.2.1"
+    "inquirer": "*",
+    "node-fetch": "*",
+    "node-localstorage": "*",
+    "stripchar": "*"
   }
 }
